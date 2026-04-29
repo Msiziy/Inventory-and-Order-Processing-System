@@ -57,6 +57,10 @@ All functional and technical requirements specified for the project were **succe
 5. The system updates stock levels safely without data corruption
 6. The system produces output as shown below (see screenshots):
 
+![Alt text](https://github.com/Msiziy/Inventory-and-Order-Processing-System/blob/main/CodeFellazProject/CodeFellazProjectLatest%20(3)/CodeFellazProjectLatest%20(1)/CodeFellazProject/Screenshot1.png?raw=true)
+
+
+
 
 
 ---
