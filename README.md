@@ -55,6 +55,9 @@ All functional and technical requirements specified for the project were **succe
 3. Each thread processes an order independently
 4. Shared resources (inventory) are protected using synchronization techniques
 5. The system updates stock levels safely without data corruption
+6. The system produces output as shown below (see screenshots):
+
+
 
 ---
 
