@@ -46,6 +46,8 @@ All functional and technical requirements specified for the project were **succe
 ## System Design
 ![Alt text](https://github.com/Msiziy/Inventory-and-Order-Processing-System/blob/main/CodeFellazProject/Screenshot%202026-04-30%20000342.png?raw=true)
 
+![Alt text](https://github.com/Msiziy/Inventory-and-Order-Processing-System/blob/main/CodeFellazProject/CodeFellazProjectLatest%20(3)/CodeFellazProjectLatest%20(1)/CodeFellazProject/Screenshot2.png?raw=true)
+
 ---
 
 ##  How It Works
