@@ -43,6 +43,11 @@ All functional and technical requirements specified for the project were **succe
 - Object-Oriented Programming (OOP)
 
 ---
+## System Design
+
+https://github.com/Msiziy/Inventory-and-Order-Processing-System/blob/main/CodeFellazProject/Screenshot%202026-04-30%20000342.png?raw=true
+
+---
 
 ##  How It Works
 
