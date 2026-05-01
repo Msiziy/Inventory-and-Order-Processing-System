@@ -81,7 +81,7 @@ void Inventory::sortByPrice(){
     }
 
     sort(sortedByPrice.begin(), sortedByPrice.end(),[](const auto& a, const auto& b) {
-      return a.second->getPrice() < b.second->getPrice();
+      return a.second->calculateFinalPrice() < b.second->calculateFinalPrice();
     });
 
     for (const auto& sortedItems : sortedByPrice) {
