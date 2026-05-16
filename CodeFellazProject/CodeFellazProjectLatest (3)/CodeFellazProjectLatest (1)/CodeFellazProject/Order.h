@@ -1,19 +1,25 @@
 #pragma once
 #include <string>
+#include <vector>
 using namespace std;
 
-class Order{
+// Represents one product line inside an order
+struct OrderItem {
+    int productId;
+    int quantityRequested;
+};
+
+class Order {
     private:
         int OrderId;
-        int ProductId;
-        int QuantityRequested;
+        vector<OrderItem> items;   //Contains product quantity and product id
         string status;
 
     public:
-        Order(int OrderId, int ProductId, int QuantityRequested, string status);
+        Order(int OrderId, vector<OrderItem> items, string status);
+
         int getOrderId();
-        int getProduct_ID();
-        int getQuantityRequested();
+        vector<OrderItem>& getItems();
         string getStatus();
         void setStatus(string status);
 };
