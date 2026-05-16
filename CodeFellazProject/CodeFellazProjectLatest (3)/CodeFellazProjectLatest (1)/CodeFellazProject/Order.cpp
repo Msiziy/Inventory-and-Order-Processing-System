@@ -1,33 +1,23 @@
 #include "Order.h"
-#include <iostream>
-#include <string>
-using namespace std;
 
-
-Order::Order(int OrderId,int ProductId, int QuantityRequested, string status){
+Order::Order(int OrderId, vector<OrderItem> items, string status) {
     this->OrderId = OrderId;
-    this->ProductId = ProductId;
-    this->QuantityRequested = QuantityRequested;
+    this->items = items;
     this->status = status;
 }
 
-int Order::getOrderId(){
+int Order::getOrderId() {
     return OrderId;
 }
 
-int Order::getProduct_ID(){
-    return ProductId;
+vector<OrderItem>& Order::getItems() {
+    return items;
 }
 
-int Order::getQuantityRequested(){
-    return QuantityRequested;
-}
-
-string Order::getStatus(){
+string Order::getStatus() {
     return status;
 }
 
-void Order::setStatus(string status){
-    this -> status = status;
+void Order::setStatus(string status) {
+    this->status = status;
 }
-
