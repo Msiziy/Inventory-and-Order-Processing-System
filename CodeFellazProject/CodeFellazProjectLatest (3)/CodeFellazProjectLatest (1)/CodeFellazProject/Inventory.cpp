@@ -8,19 +8,22 @@
 #include <vector>
 #include <iomanip>
 #include <thread>
-#include <chrono>
 
 using namespace std;
 
-//Method For A adding Product in products map
+//Method For A adding Product In Products Map
 bool Inventory::addProduct(shared_ptr<Product> product){
-    lock_guard<mutex> lock(inventoryMutex); //Lock mutex To Ensure Thread Safe Read Access
-    int productID = product -> getProductID();
 
-    if(products.count(productID)){ //Checks If The Product With That productID Exists
+    lock_guard<mutex> lock(inventoryMutex);
+    int productID = product->getProductID();
+
+    auto it = products.find(productID);//Single Map Lookup
+
+    if(it != products.end()){//Product Already Exists
         return false;
     }
-    products[productID] = product;
+
+    products[productID] = product;//Insert Product
     return true;
 }
 //Method For Removing Product in products map using it productID
@@ -56,8 +59,9 @@ bool Inventory::searchProduct(int ProductID){
 
 void Inventory::displayAllProduct(){
     DisplayTableHeader();
+    lock_guard<mutex> lock(inventoryMutex);
     if(!products.empty()){
-        for(auto product : products){ //iterating through map for displaying all product existing in map
+        for(auto product : products){ //Iterating through map for displaying all product existing in map
             product.second -> displayProduct();
         }
     }else{
@@ -80,7 +84,8 @@ void Inventory::sortByPrice(){
         sortedByPrice.push_back(item);
     }
 
-    sort(sortedByPrice.begin(), sortedByPrice.end(),[](const auto& a, const auto& b) {
+    sort(sortedByPrice.begin(), sortedByPrice.end(),[](const auto& a, const auto& b) {//
+
       return a.second->calculateFinalPrice() < b.second->calculateFinalPrice();
     });
 
@@ -99,7 +104,7 @@ void Inventory::sortByQuantity(){
         sortedByQuantity.push_back(item);
     }
 
-    sort(sortedByQuantity.begin(), sortedByQuantity.end(),[](const auto& a, const auto& b) { // a repres
+    sort(sortedByQuantity.begin(), sortedByQuantity.end(),[](const auto& a, const auto& b) {
       return a.second->getQuantity() < b.second->getQuantity();
     });
 
@@ -109,67 +114,108 @@ void Inventory::sortByQuantity(){
 }
 
 bool Inventory::processOrder(Order& order) {
-    auto start = chrono::high_resolution_clock::now();
-    lock_guard<mutex> lock(inventoryMutex);
+    stringstream ss;
 
-    //Find product
-    auto it = products.find(order.getProduct_ID());
+    // Add the header line showing which thread is processing which order
+    ss << "[Thread: " << this_thread::get_id()
+       << "] Processing Order #" << order.getOrderId() << "\n";
 
-    //Check if Product Exists First
-    if (it == products.end()) {
+    // Flag to determine whether the order can be processed
+    bool canProcess = true;
+
+    // Check stock sufficiency
+    {
+        // Lock inventory
+        lock_guard<mutex> lock(inventoryMutex);
+
+        // Loop through every item in the order
+        for (auto& item : order.getItems()) {
+
+            // Try to find the product in the inventory map
+            auto it = products.find(item.productId);
+
+            // If product does not exist, fail the order
+            if (it == products.end()) {
+                ss << "\tORDER FAILED | Product ID: "
+                   << item.productId << " NOT FOUND\n\n";
+                canProcess = false;
+                break;
+            }
+
+            // If not enough stock, fail the order
+            if (it->second->getQuantity() < item.quantityRequested) {
+
+                ss << "\tORDER FAILED | Product ID: "
+                   << item.productId<<" | Product Name: "
+                   << it->second->getName()
+                   << " | Requested: " << item.quantityRequested
+                   << " | In Stock: " << it->second->getQuantity()
+                   << "\n\n";
+                canProcess = false;
+                break;
+            }
+        }
+    } // inventory mutex released here
+
+    // If validation failed, update status and print result
+    if (!canProcess) {
         order.setStatus("Failed");
-
         processedOrders.push_back(make_unique<Order>(order));
-
-        cout << "[Thread: " << this_thread::get_id() << "] "
-             << "\tORDER FAILED | Product NOT FOUND"
-             << " | Requested: " << order.getQuantityRequested()
-             << endl << endl;
-        auto end = chrono::high_resolution_clock::now();
-        auto duration = chrono::duration<double>(end - start);
-        cout << "\tTime taken: " << duration.count() << " ms\n";
+        lock_guard<mutex> printLock(printMutex);// Lock output to prevent mixed printing
+        cout << ss.str();
         return false;
     }
-    shared_ptr<Product>& product = it->second;
 
-    cout << "[Thread: " << this_thread::get_id() << "] Processing Order #"
-         << order.getOrderId()
-         << " | Product ID: " << order.getProduct_ID()
-         << " | Requested: " << order.getQuantityRequested()
-         << endl;
+    double orderTotal = 0;
 
-    // Handle failed order
-    if (product->getQuantity() < order.getQuantityRequested()) {
-        order.setStatus("Failed");
+    // Update stock
+    {
+        // Lock inventory again to safely update stock
+        lock_guard<mutex> lock(inventoryMutex);
 
+        // Loop through each item again
+        for (auto& item : order.getItems()) {
+
+            // Get the product from the map
+            auto& product = products[item.productId];
+
+            // Calculate total cost for this item
+            double lineTotal =
+                product->calculateFinalPrice() * item.quantityRequested;
+
+            // Add to total order price
+            orderTotal += lineTotal;
+
+            // Reduce product quantity in inventory
+            product->setQuantity(
+                product->getQuantity() - item.quantityRequested
+            );
+
+            // Add details of this item to output
+            ss << "\t+ Product ID: "
+               << item.productId<<" | Product Name: "
+               << product->getName()
+               << " x" << item.quantityRequested
+               << " | R" << fixed << setprecision(2) << lineTotal
+               << " | Remaining Stock: "
+               << product->getQuantity() << "\n";
+        }
+
+        order.setStatus("Successful");
         processedOrders.push_back(make_unique<Order>(order));
+    } // inventory mutex released here
 
-        cout << "\t    ORDER FAILED       "
-             << " | Product Name: " << product->getName()
-             << "    | In Stock: " << product->getQuantity()
-             << endl << endl;
-        auto end = chrono::high_resolution_clock::now();
-        auto duration = chrono::duration<double>(end - start);
-        cout << "\tTime taken: " << duration.count() << " ms\n";
-        return false;
+    // output total
+    ss << "\tORDER SUCCESSFUL | Total: R"
+       << fixed << setprecision(2) << orderTotal << "\n\n";
+
+    // Final output
+    {
+        // Lock printing so output from different threads does not mix
+        lock_guard<mutex> printLock(printMutex);
+        cout << ss.str();
     }
 
-    //Handle passed order
-    product->setQuantity(
-        product->getQuantity() - order.getQuantityRequested()
-    );
-
-    order.setStatus("Successful");
-
-    processedOrders.push_back(make_unique<Order>(order));
-
-    cout << "\t    ORDER SUCCESSFUL   "
-         << " | Product Name: " << product->getName()
-         << "   | Remaining Stock: " << product->getQuantity()
-         << endl << endl;
-    auto end = chrono::high_resolution_clock::now();
-    auto duration = chrono::duration<double>(end - start);
-    cout << "\tTime taken: " << duration.count() << " ms\n";
     return true;
 }
 
@@ -184,8 +230,3 @@ void Inventory::DisplayTableHeader(){
 
     cout << "+-----------+---------------------+------------------+--------------+-------------------+" << endl;
 }
-
-
-
-
-
