@@ -15,6 +15,7 @@ class Inventory
         map<int,shared_ptr<Product>> products;
         vector<unique_ptr<Order>> processedOrders;
         mutex inventoryMutex;
+        mutex printMutex;
 
     public:
         bool addProduct(shared_ptr<Product> product);
@@ -27,4 +28,3 @@ class Inventory
         void DisplayTableHeader();
 
 };
-
