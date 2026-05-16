@@ -19,5 +19,3 @@ class DiscountedProduct : public Product {
     private:
         double discountCalculation();
 };
-
-
