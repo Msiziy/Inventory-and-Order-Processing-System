@@ -5,11 +5,11 @@
 using namespace std;
 
 
-//Constructer Accepting Arguement Of Parent Class And Child Class
-DiscountedProduct::DiscountedProduct (int ProductId, string ProductName, int ProductQuantity, double ProductPrice)
-    :Product(ProductId, ProductName, ProductQuantity, ProductPrice) //Construct Of Parent Class
+//Constructor Accepting Arguement Of Parent Class And Child Class
+DiscountedProduct::DiscountedProduct(int ProductId, string ProductName, int ProductQuantity, double ProductPrice)
+    : Product(ProductId, ProductName, ProductQuantity, ProductPrice)
 {
-    this->ProductDiscount =  ProductDiscount;
+    this->ProductDiscount = 10;
 }
 
 double DiscountedProduct::discountCalculation(){
@@ -24,8 +24,7 @@ void DiscountedProduct::displayProduct(){
     cout << "| " << setw(10) << left << productID
          << "| " << setw(20) << left << ProductName
          << "| " << setw(17) << left << ProductQuantity
-         << "| R" << setw(12) << left << calculateFinalPrice()  // price AFTER 10% discount
+         << "| R" << setw(12) << left << calculateFinalPrice()// Price AFTER 10% Discount
          << "| " << setw(13) << left << "Discount (-10%)"
          << "   |" << endl;
 }
-
