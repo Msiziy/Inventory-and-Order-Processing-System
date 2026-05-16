@@ -59,8 +59,7 @@ All functional and technical requirements specified for the project were **succe
 
 ![Alt text](https://github.com/Msiziy/Inventory-and-Order-Processing-System/blob/main/CodeFellazProject/CodeFellazProjectLatest%20(3)/CodeFellazProjectLatest%20(1)/CodeFellazProject/Screenshot1.png?raw=true)
 
-![Alt text](<img width="1103" height="951" alt="image" src="https://github.com/user-attachments/assets/15c2e2ca-334e-41c5-a0f9-8a06d6ce95bd" />
-)
+![Alt text](https://github.com/Msiziy/Inventory-and-Order-Processing-System/blob/58291f5fbe89debc8741a461ef9dfbc2020975cf/CodeFellazProject/ScreenShot_2.png)
 
 ![Alt text](https://github.com/Msiziy/Inventory-and-Order-Processing-System/blob/main/CodeFellazProject/CodeFellazProjectLatest%20(3)/CodeFellazProjectLatest%20(1)/CodeFellazProject/Screenshot3.png?raw=true)
 
