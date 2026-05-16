@@ -20,5 +20,6 @@ class Product {
         double getPrice();
         virtual double calculateFinalPrice();
         virtual void  displayProduct();
+        virtual ~Product() = default;
 };
 
