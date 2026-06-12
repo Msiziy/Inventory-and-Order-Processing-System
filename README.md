@@ -91,11 +91,3 @@ All functional and technical requirements specified for the project were **succe
 - Enhance logging and monitoring
 
 ---
-
-##  Acknowledgements
-
-Special thanks to the lecturer and institution for providing the project requirements and guidance throughout the development process.
-
----
-
-> ⭐ If you find this project useful, consider giving it a star!
